@@ -1,0 +1,25 @@
+# φ(n)-Residue Spectral Framework
+# Python Package Requirements
+# Last updated: 2025-01-14
+
+# Core numerical libraries
+mpmath>=1.3.0          # Arbitrary precision arithmetic
+numpy>=1.24.0          # Numerical arrays and operations
+
+# Optional but recommended
+scipy>=1.10.0          # Scientific computing (for optimization in zero finding)
+matplotlib>=3.7.0      # Plotting (for generating visuals/)
+
+# For extended validation (SageMath tests)
+# Note: SageMath must be installed separately
+# See: https://doc.sagemath.org/html/en/installation/
+
+# Development/Testing
+pytest>=7.4.0          # Unit testing framework
+pytest-cov>=4.1.0      # Coverage reporting
+
+# Data handling
+json5>=0.9.0           # JSON with comments support
+
+# Documentation generation (optional)
+markdown>=3.4.0        # Markdown processing
