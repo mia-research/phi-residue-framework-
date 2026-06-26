@@ -1,0 +1,43 @@
+% Lonely Runner Conjecture — Lean 4 Blueprint
+% This file outlines the proof strategy for each case.
+% See https://leanprover-community.github.io/blueprint/ for the blueprint system.
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,amsthm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{definition}[theorem]{Definition}
+
+\title{Lonely Runner Conjecture — Proof Blueprint}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Setup}
+
+\begin{definition}[Circle distance]
+For $x \in \mathbb{R}$, define $\|x\| = \min(\{x\}, 1 - \{x\})$
+where $\{x\}$ denotes the fractional part of $x$.
+\end{definition}
+
+\begin{definition}[Lonely Runner Conjecture]
+For $n \geq 2$, given $n-1$ distinct nonzero integers $v_1, \ldots, v_{n-1}$,
+there exists $t \in \mathbb{R}$ such that $\|v_i t\| \geq 1/n$ for all $i$.
+\end{definition}
+
+\section{Case $n = 4$}
+
+Three distinct nonzero speeds. Follows Betke--Wills (1972) and Cusick (1982).
+
+\section{Case $n = 6$}
+
+Five distinct nonzero speeds. Follows Barajas--Serra (2008).
+
+\section{Case $n = 7$ (WIP)}
+
+Six distinct nonzero speeds. Under development.
+
+\end{document}

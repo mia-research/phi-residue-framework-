@@ -1,0 +1,31 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'lonely-runner-lean/**'
+  pull_request:
+    paths:
+      - 'lonely-runner-lean/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lonely-runner-lean
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install elan
+        run: |
+          curl https://elan.fermyon.app/v1/install.sh -sSf | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
+      - name: Get mathlib cache
+        run: lake exe cache get
+
+      - name: Build
+        run: lake build
