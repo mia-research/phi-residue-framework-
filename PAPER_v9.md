@@ -21,9 +21,9 @@ moved only by the runners in the way, reaches such an opening exactly when the r
 whole-number speeds, whether an opening is lonely is a check of `n − 1` remainders. In these terms
 the conjecture says the isolation is only ever shifted, never destroyed, and a proof is a finite list
 of conditions on the speed differences, each with a proof that a lonely opening exists under it. We
-give seven such conditions at general order, and show that a smallest counterexample, if there is
-one, must combine differences divisible by `n` with differences not divisible by `n` of total cost
-at least `n`. The results are formalised in Lean 4.
+give seven such conditions at general order, and show how they compose: differences not divisible
+by `n` of small enough total cost can be removed, passing the question to a smaller set at the same
+order. The results are formalised in Lean 4.
 
 ---
 
@@ -77,9 +77,9 @@ runner is in the way (§7).
 **What is proved.** Because the chain is an equivalence, a condition on the speed differences under
 which a lonely opening exists is a proof of the conjecture for every arrangement meeting it — the
 isolation is shown to be shifted and not destroyed there, with nothing further owed. We prove seven
-such conditions at every order (§10). Writing `M` for the number of differences divisible by `n`, a
-smallest counterexample, if there is one, has `M ≥ 1`, and its differences not divisible by `n` have
-total cost at least `n` (Corollary 16).
+such conditions at every order (§10), and show how they compose (§11): when the differences not
+divisible by `n` have small enough total cost, removing them passes the question to a smaller set at
+the same order, and any condition that settles the smaller set settles the original.
 
 **What remains** is to close the list: conditions of this kind that jointly cover every set of
 differences (§14). When the list closes, the isolation is shown never to be destroyed.
@@ -588,7 +588,7 @@ configuration. All seven hold at every order.
 | **R1** the ratio condition | `d_max ≤ (n−1)·d_min` | the bound `1/(n·d_min)`, the opening `j = 0` of `d_min` |
 | **R2** the band ladder | every disparity in `[(nL+1)e/(nj+1), (nL+n−1)e/(nj+1)]` for some `j, L` | the `j`-th opening of `e` |
 | **R3** the non-resonant flank | `gcd(e, n) = 1` and no disparity divisible by `n` | the opening `a = e·s`, `e·s ≡ 1 (mod n)` |
-| **R4** the divisible flank | `n \| e`, `e` largest, no other disparity divisible by `n`, fewer than `φ(n)` of the others coprime to `n` | the opening `a = k·e + 1`, `k` a unit |
+| **R4** the divisible flank | `n \| e`, and either (a) `e` largest, no other disparity divisible by `n`, fewer than `φ(n)` of the others coprime to `n`; or (b) every other multiple of `n` clear at `j = 0`, and the others of total cost `∑ max(2, gcd(d, n)) < n` | the opening `a = k·e + 1`, `k < n` |
 | **R5** the descent | the disparities not divisible by `n` have total cost `∑ max(2, gcd(e, n)) < n` | reduces to the cofactors of the multiples, same order |
 | **R6** the divisibility rules | for some `2 ≤ q ≤ n`, no disparity divisible by `q` | the instant `t = 1/q` |
 | **R7** the free disparity | one disparity off the `P`-lattice of the rest; the rest at most three and sharing it | a lonely instant, `n ≥ 4` |
@@ -632,6 +632,24 @@ injective. There are `φ(n)` units and fewer than `φ(n)` coprime disparities, s
 At a prime order every non-multiple is coprime and `φ(n) = n − 1`, so for a subject with its full
 `n − 2` non-flank disparities the budget condition holds automatically. At `n = 8` it asks that at
 most three of the non-flank disparities be odd.
+
+**R4 without the largest hypothesis.** Let `n | e`, with no condition on the size of `e`. Suppose
+every other multiple of `n` is clear at the opening `j = 0` of `e`, and the disparities not divisible
+by `n` have total cost `∑ max(2, gcd(d, n))` below `n`.
+
+*Proof.* Take `a = k·e + 1` with `0 ≤ k < n`, so that `a ≡ 1 (mod n)` and `a < n·e`. The flank reads
+`e`. A multiple `d = n·m` reads `d + (n·e)(m·k) ≡ d (mod n·e)`, the same as at `j = 0`, so it is
+clear by hypothesis. A non-multiple `d = q·e + r`, with `q = ⌊d/e⌋`, has `r ≥ 1` (otherwise `e | d`,
+and so `n | d`), and reads `e·((d·k + q) mod n) + r`. That lies in `[e, (n−1)e]` exactly when
+`d·k + q ≢ 0, −1 (mod n)`. Each congruence `d·k ≡ c (mod n)` has at most `gcd(d, n)` solutions below
+`n`, since two solutions differ by a multiple of `n/gcd(d, n)`; and when `gcd(d, n) ≥ 2` the residues
+`−q` and `−q − 1` cannot both be solvable, since `gcd(d, n)` would divide both and hence `1`. So `d`
+forbids at most `max(2, gcd(d, n))` of the `n` values of `k`, the costs add up to less than `n`, and
+some `k` is forbidden by none. ∎
+
+When `e` is the largest disparity, `q = 0` for every other disparity and form (a) is usually the
+sharper, since restricting `k` to units removes the residue `0` for free. Form (b) needs no ordering
+at all.
 
 **R5, the descent.** Split the disparities into a set `E` of disparities not divisible by `n` and
 the multiples `n·m`, `m ∈ M`. Give each `e ∈ E` the **cost** `max(2, gcd(e, n))`.
@@ -705,28 +723,28 @@ R3's condition is the `q = n` instance of R6, which does not need a coprime flan
 
 ---
 
-## 11. What a smallest counterexample must look like
+## 11. How the rules compose
 
 Write `M` for the number of disparities divisible by `n`, and call the total cost of the others,
 `∑ max(2, gcd(e, n))`, their **cost**.
 
 | region | standing |
 |---|---|
-| `M = 0` | **closed** — R6 at `q = n` names `t = 1/n` |
-| cost below `n` | **reduced** — R5 passes to fewer disparities, or to smaller ones, at the same order |
+| `M = 0` | **settled** — R6 at `q = n` names `t = 1/n` |
+| cost below `n` | **passed down** — R5 reduces the set to its cofactors, at the same order |
 | `M ≥ 1` and cost at least `n` | the middle |
 
-The split is exhaustive. Order sets by the number of disparities and then by their sum.
+> **Corollary 16 (composition).** Let `n ≥ 3`. If the disparities of a set not divisible by `n` have
+> cost below `n`, and the set of cofactors of its multiples of `n` satisfies any condition on the
+> list — or is itself passed down by R5 to a set that does — then the set is lonely at threshold
+> `1/n`.
 
-> **Corollary 16.** Let `n ≥ 3`. A set of positive integers that is not lonely at threshold `1/n`,
-> minimal in that order, has at least one disparity divisible by `n`, and its disparities not
-> divisible by `n` have cost at least `n`.
+*Proof.* By Theorem 15, applied as many times as the passing down continues. Each application leaves
+fewer disparities, or the same number with smaller ones, so it stops. ∎
 
-*Proof.* `M = 0` is impossible by R6. If the cost is below `n`, Theorem 15 shows that the set of
-cofactors `M` is not lonely either. It has fewer disparities if any disparity is not divisible by
-`n`, and otherwise the same number with a smaller sum; either way the original set was not minimal. ∎
-
-Each non-multiple costs at most `n/2`, so a cost of at least `n` needs at least two of them.
+So R5 is not an eighth region but a way of carrying every other rule into sets it would not reach
+directly. For example, at `n = 5` the set `{1} ∪ 5·{1, 2, 3} = {1, 5, 10, 15}` is passed down to
+`{1, 2, 3}`, which R1 settles.
 
 The middle is not the region that remains. R1, R2, R4, R6 at `q < n` and R7 are conditions of other
 kinds and reach into it without reference to the cost. Both middle examples in this paper are settled:
@@ -789,8 +807,8 @@ with no hypothesis beyond injectivity.
 
 **Proved — the cases (§§10–11).** Seven rules, each a condition with a proof that a certificate
 exists under it, at every order. Every configuration satisfying any of them is settled, and at every
-order there are infinitely many. A minimal counterexample has a disparity divisible by `n` and
-non-multiples of cost at least `n`.
+order there are infinitely many. R5 carries every rule into further sets by passing them down to
+their cofactors (Corollary 16).
 
 **Remaining.** Conditions covering the disparity sets in the middle on which every rule fails, each
 discharged by showing a certificate exists. When they are found, the isolation of the ideal is shown
@@ -839,7 +857,7 @@ argument.
 | R1 | `ratio_condition`, `clear_at_last_opening` |
 | R2 | `lonely_flank_of_band`, `bandFits_forces_spread`, `spread_zero_iff_ratio` |
 | R3 | `flankWorks_of_coprime`, `flankWorks_of_not_resonant` |
-| R4 | `flankWorks_of_dvd_totient`, `exists_goodK_totient` |
+| R4 | (a) `flankWorks_of_dvd_totient`, `exists_goodK_totient`; (b) `flankWorks_of_dvd_budget`, `card_forbidden_le`, `card_congr_le` |
 | R5, Theorem 15 | `lonely_multi_descent_iff`, `card_bad_le`, `bad_step`; one non-multiple: `lonely_descent_iff`, `exists_clear_shift`; all multiples: `lonely_scale_iff` |
 | R6 | `ratWorks_le_order`, `ratWorks_one_iff`, `ratWorks_family_fails_iff` |
 | R7 | `lonely_of_one_free`, `lonely_of_one_irrational` |
