@@ -6,25 +6,24 @@
 
 ## Abstract
 
-Let `n` runners with distinct real speeds move on a circle of unit circumference, and call a runner
-**lonely** at an instant when every other is at distance at least `1/n`. All `n` are lonely at once
-exactly when they stand at the vertices of a regular `n`-gon; for speeds in arithmetic progression
-that configuration recurs at exactly `φ(n)` instants per period, a law of Palelei (2026a). Deforming
-the speeds destroys the simultaneity, and we give an exact criterion for when a global instant
-survives. The Lonely Runner Conjecture asserts that a deformation removes only the simultaneity —
-that the isolation disperses to the runners individually rather than vanishing — and we locate the
-dispersed instants exactly. For any runner of any arrangement, with no hypothesis beyond
-distinctness of the speeds, loneliness is equivalent to the existence of a lonely **opening**
-`(j + 1/n)/e` of one of that runner's own speed differences `e`, and equivalently to the halting of
-a deterministic construction started at the earliest possible instant and driven only by the runners
-currently obstructing. Each opening is a global instant of the arithmetic progression whose common
-difference is `e`. For whole-number differences the opening condition is a finite conjunction of
-modular memberships, so a pair `(e, j)` is a certificate checked in `n − 1` modular reductions. The
-conjecture is thereby a statement about certificates, and a proof of it is a finite list of
-conditions on the differences, each with a proof that a certificate exists under it. We give seven
-such conditions, stated at general order, and show that both ends of the count of differences divisible
-by `n` are excluded from a minimal counterexample. The characterisation and the conditions are
-formalised in Lean 4.
+Runners with distinct constant speeds move round a circular track of length 1, and a runner is
+**lonely** at a moment when every other runner is at least `1/n` away. The Lonely Runner Conjecture
+says every runner is lonely at some moment. When the speeds are equally spaced, all `n` runners are
+lonely at once, evenly spread round the track, and this happens exactly `φ(n)` times before the
+pattern repeats (Palelei 2026a). We call this **global isolation** and take it as the ideal. Any
+other speeds are the ideal plus deviations: we give the exact displacement each deviation causes,
+and the exact condition under which a moment of global isolation survives it. When it does not, each
+runner's isolation is shifted, and we show where it goes. For any runner of any arrangement, with no
+hypothesis beyond distinct speeds, the runner is lonely at some moment exactly when it is lonely at a
+moment of global isolation of the equally spaced arrangement whose step is one of its own speed
+differences `e` — a moment `(j + 1/n)/e`, called an **opening**. A deterministic construction,
+moved only by the runners in the way, reaches such an opening exactly when the runner is lonely. For
+whole-number speeds, whether an opening is lonely is a check of `n − 1` remainders. In these terms
+the conjecture says the isolation is only ever shifted, never destroyed, and a proof is a finite list
+of conditions on the speed differences, each with a proof that a lonely opening exists under it. We
+give seven such conditions at general order, and show that a smallest counterexample, if there is
+one, must combine differences divisible by `n` with differences not divisible by `n` of total cost
+at least `n`. The results are formalised in Lean 4.
 
 ---
 
@@ -33,64 +32,61 @@ formalised in Lean 4.
 Let `v₁, …, vₙ` be distinct real speeds, each runner moving on a circle of unit circumference at its
 own speed, and let `‖x‖` denote the distance from `x` to the nearest integer. Runner `i` is **lonely**
 at time `t` if `‖(vⱼ − vᵢ)t‖ ≥ 1/n` for every `j ≠ i`. The Lonely Runner Conjecture, due to Wills and
-independently to Cusick, asserts that every runner is lonely at some instant. It is proved for
+independently to Cusick, asserts that every runner is lonely at some moment. It is proved for
 `n ≤ 7` by arguments particular to each order, the last two being Bohman, Holzman and Kleitman (2001)
 at six runners and Barajas and Serra (2008) at seven. It has been verified by computer at eight
 runners (Rosenfeld 2025) and, by extensions of that method, up to thirteen (Sungkawichai and
-Trakulthongchai 2026). Nothing in this paper depends on those verifications.
+Trakulthongchai 2026). Nothing in this paper depends on those results, or on any result outside the
+framework developed here.
 
-The difficulty at a fixed order is that the conjecture asks for a single instant meeting `n − 1`
-simultaneous conditions, with no evident reason why the times satisfying each should ever intersect.
-This paper begins where the intersection is forced rather than accidental, and that is where all `n`
-runners are lonely together.
+**Global isolation is the ideal.** If the runners' speeds are equally spaced, say `1, 2, …, n`, there
+are moments when all `n` runners are lonely at once: they stand evenly spread around the track, `1/n`
+apart. We call this **global isolation**. It happens exactly `φ(n)` times before the whole pattern
+repeats (Theorem 4); with eight runners, four times, at `t = 1/8, 3/8, 5/8` and `7/8`. Any other set
+of speeds is the ideal plus deviations, and the deviations displace each runner from its evenly
+spread position by an exact amount (Theorem 5). Theorem 6 says exactly which deviations keep a moment
+of global isolation: every runner must be displaced by a whole number of steps of `1/n`, and no two
+runners may land on the same point. When that fails, the runners no longer line up together, and each
+runner's isolation is shifted to a moment of its own. We show where it goes: a runner is lonely
+exactly when it is lonely at a moment of global isolation of an equally spaced arrangement whose step
+is one of its own speed differences (§§5–6). The conjecture, in these terms, is that the isolation is
+only ever shifted: no arrangement of speeds can shift it out of existence.
 
-**Global isolation, and its deformation.** Simultaneous isolation is rigid: the `n` runners are all
-lonely at one instant precisely when they stand at the vertices of a regular `n`-gon (Theorem 2).
-For speeds in arithmetic progression that configuration is reached at instants one can write down,
-`φ(n)` of them in each period — the law of Palelei (2026a), restated here as Theorem 4. Every other
-arrangement is a deformation of a progression, and we give an exact criterion for when a global
-instant survives one (Theorem 6). Generically none does.
+We make no claim about *which* lonely moment is found — not the first, not the loneliest. The claim
+is only that the isolation of the ideal is shifted by a change of speeds, deterministically, to a
+moment of a known form, and is not destroyed.
 
-What a deformation removes is the *simultaneity*, and Corollary 3 says it can remove nothing less:
-the number of simultaneously lonely runners is never exactly `n − 1`, so isolation cannot be taken
-from one runner while the others keep theirs together. The conjecture is the assertion that what
-remains is a full set of individual instants. Locating them is the business of this paper, and they
-turn out to be global instants again: each runner's lonely instants are represented by openings, and
-an opening of the difference `e` is a global instant of the progression whose common difference is
-`e` (§6).
-
-**How they are located.** The loneliness condition is **closed** — a runner at distance exactly `1/n`
-leaves the subject alone — and so the times at which a given runner obstructs form a union of *open*
-intervals, one about each of its relative laps. Their endpoints belong to the complement. The
-framework is built on that boundary rather than on the time axis: it shows that every lonely state
-admits a canonical representation on the boundary, and then reads that representation
-arithmetically. The consequence is a chain of **equivalences**:
+**How the shifted isolation is found.** Fix one runner and call it the subject. Another runner is *in
+the way* while it is closer to the subject than `1/n`, and stops being in the way the moment it is
+exactly `1/n` away. So each other runner is in the way for a short stretch every time it passes the
+subject, and each stretch ends with that runner exactly `1/n` away. We prove that if the subject is
+ever lonely, it is lonely at one of those end moments (Theorem 9). Those end moments are the openings,
+and each is a moment of global isolation of the equally spaced arrangement whose step is the
+difference between the subject's speed and that runner's (§6). For whole-number speeds, checking an
+opening is a short calculation with remainders (Theorem 10). The result is a chain of equivalences,
+each proved in both directions for every arrangement:
 
 ```
     loneliness   ⟺   lonely opening   ⟺   certificate   ⟺   cascade halts
 ```
 
-The substantive direction is the forward one: every lonely instant is represented by a lonely
-opening, so the openings are not a family one may restrict attention to — they are the form
-loneliness takes.
+Here a **certificate** is a pair `(e, j)` naming a lonely opening, and the **cascade** is a
+construction that starts when the nearest runner first leaves the subject and moves only when some
+runner is in the way (§7).
 
-**What is established.** For every arrangement and every runner, with no hypothesis beyond
-injectivity of the speeds and uniformly in the order: loneliness is equivalent to the existence of a
-lonely opening of one of the runner's own differences; for whole-number differences that condition
-is an explicit finite conjunction of modular memberships; and a deterministic construction — the
-**cascade** — started at the earliest possible instant halts exactly when the runner is lonely, at
-the first such instant, with a certificate readable off its halting state (§§2–8). Because the chain
-is an equivalence, a certificate exhibited under a condition on the differences is a proof of the
-conjecture for every configuration satisfying it. Seven such conditions are proved at every order
-(§10). Writing `M` for the number of differences divisible by `n` and `c` for the number of
-differences, a minimal counterexample must have `1 ≤ M ≤ c − 2` (§11).
+**What is proved.** Because the chain is an equivalence, a condition on the speed differences under
+which a lonely opening exists is a proof of the conjecture for every arrangement meeting it — the
+isolation is shown to be shifted and not destroyed there, with nothing further owed. We prove seven
+such conditions at every order (§10). Writing `M` for the number of differences divisible by `n`, a
+smallest counterexample, if there is one, has `M ≥ 1`, and its differences not divisible by `n` have
+total cost at least `n` (Corollary 16).
 
-**What remains** is to close the list: conditions of this kind that jointly cover every difference
-set (§14).
+**What remains** is to close the list: conditions of this kind that jointly cover every set of
+differences (§14). When the list closes, the isolation is shown never to be destroyed.
 
 **Organisation.** Layer 1, §§2–8, establishes the characterisation. Layer 2, §§9–14, gives the
-conditions under which a certificate exists and the structure of what they leave. §15 records what
-holds at general `n`, and §16 the formal verification.
+conditions under which a lonely opening exists and describes what they leave. §15 records what holds
+at general `n`, and §16 the formal verification.
 
 ---
 
@@ -209,7 +205,7 @@ Theorem 2 says that simultaneous isolation is rigid. There is one family of arra
 the configuration is reached, its instants can be written down, and there are `φ(n)` of them in each
 period; every other arrangement is a deformation of it. The `φ(n)` law is prior work (Palelei 2026a,
 Theorem 3.1), restated with its proof so the paper is self-contained, and no part of it is claimed as
-new. What is developed here is the deformation: an exact criterion for when a global instant survives
+new. What is developed here is the deformation: an exact criterion for when a moment of global isolation survives
 (§3.1), and, where none does, the location of the isolation that remains (§§4–8).
 
 > **Theorem 4** (the `φ(n)` law; Palelei 2026a, Theorem 3.1)**.** Let the speeds be
@@ -256,7 +252,7 @@ The first term is a common rotation. The second places runner `k` at the vertex 
 are all `n` vertices since `gcd(a,n) = 1`. The third is the displacement, of size `e_k a / d` in units
 of `1/n`. ∎
 
-> **Theorem 6.** The global instant survives the deviation if and only if every displacement is a
+> **Theorem 6.** The moment of global isolation survives the deviation if and only if every displacement is a
 > whole number of `n`-ths and `k ↦ k a + e_k a / d (mod n)` is a bijection of `ℤ/n`.
 
 *Proof.* Write `w_k = e_k a / d`, so that runner `k` sits at `(k a + w_k)/n` up to the common
@@ -273,14 +269,14 @@ positions are distinct grid points, so `k ↦ k a + w_k (mod n)` is injective on
 bijection. ∎
 
 So simultaneity requires the displacements to be integral, which forces commensurable speeds, and
-requires the resulting map of the vertices to remain a permutation. An irrational deviation destroys
-it outright; a rational one destroys it as soon as two runners are sent to the same vertex.
+requires the resulting map of the vertices to remain a permutation. An irrational deviation breaks the
+global moment outright; a rational one breaks it as soon as two runners are sent to the same vertex.
 
-**Where the isolation goes.** When the global instant fails, what is lost is the *simultaneity*: no
-single instant serves every runner, and each must be given one of its own. By Corollary 3 the
-simultaneity goes all at once, which is why Theorem 6 is all-or-nothing. The conjecture is the
-assertion that what it leaves behind is a full set of individual instants. Layer 1 locates those
-instants exactly; Layer 2 asks when they exist.
+**Where the isolation goes.** When the moment of global isolation fails, only the simultaneity is
+lost: the runners no longer line up together, and each runner's isolation is shifted to a moment of
+its own. By Corollary 3 this cannot happen to one runner alone — if one runner is not lonely at a
+moment, at least one other is not lonely there either. Layer 1 shows where each runner's isolation is
+shifted to. Layer 2 proves, for every condition on its list, that it is not destroyed.
 
 ---
 
@@ -374,8 +370,8 @@ A certificate for whole-number disparities is checked in `n − 1` modular reduc
 trace of how it was found. Commensurable real disparities are whole numbers after a common scaling,
 which changes no loneliness, so Theorem 10 decides every commensurable subject.
 
-**Every opening is a global instant.** The opening `(j + 1/n)/e` equals `a/(n e)` with
-`a = n j + 1`, and `gcd(a, n) = 1`. By Theorem 4 this is a global instant of the arithmetic
+**Every opening is a moment of global isolation.** The opening `(j + 1/n)/e` equals `a/(n e)` with
+`a = n j + 1`, and `gcd(a, n) = 1`. By Theorem 4 this is a moment of global isolation of the arithmetic
 progression whose common difference is `e`: at the gap between the subject and its flank, the
 progression of that gap would isolate every runner at once. A certificate asks that the actual
 runners, read against that progression, all stay clear. The opening index is always a unit of `ℤ/n`
@@ -479,8 +475,8 @@ one of its zones and not be lonely; if it ended before `T`, its end would be a l
 **(d)** If `T` is the bound then `d_min` reads exactly `1/n` there. Otherwise `T` is the next opening
 `(N + 1/n)/d` of some runner `d`, which then sits at exactly `1/n`. ∎
 
-So a fixed point is the **first** lonely instant, and it is always an opening — which is why the
-certificate has the form `(e, j)`.
+So a fixed point is a lonely instant, and it is always an opening — which is why the certificate has
+the form `(e, j)`. Part (b) says it is also the first; nothing in Layer 2 uses that.
 
 > **Theorem 12 (Cascade localisation).** For every positive instant `s` at which the subject is
 > lonely: `s ≥ 1/(n·d_min)`; every step of the cascade is at most `s`; `s` is matched by a lonely
@@ -534,7 +530,7 @@ speeds, and uniformly in the order. For a fixed subject of a fixed arrangement:
 * for whole-number disparities that condition is **exactly** a finite conjunction of modular
   memberships, decided by the `e` indices `0 ≤ j < e` (Theorem 10);
 * the cascade, started at the bound and driven only by the runners in the way, halts **exactly when**
-  the subject is lonely, at the first such instant, with a certificate readable off the halting state
+  the subject is lonely, with a certificate readable off the halting state
   (Theorems 11–13).
 
 **This fixes what a proof is.** Because the equivalence is unconditional and runs both ways,
@@ -593,7 +589,7 @@ configuration. All seven hold at every order.
 | **R2** the band ladder | every disparity in `[(nL+1)e/(nj+1), (nL+n−1)e/(nj+1)]` for some `j, L` | the `j`-th opening of `e` |
 | **R3** the non-resonant flank | `gcd(e, n) = 1` and no disparity divisible by `n` | the opening `a = e·s`, `e·s ≡ 1 (mod n)` |
 | **R4** the divisible flank | `n \| e`, `e` largest, no other disparity divisible by `n`, fewer than `φ(n)` of the others coprime to `n` | the opening `a = k·e + 1`, `k` a unit |
-| **R5** the descent | every disparity but one is a multiple of `n` | reduces to one disparity fewer, same order |
+| **R5** the descent | the disparities not divisible by `n` have total cost `∑ max(2, gcd(e, n)) < n` | reduces to the cofactors of the multiples, same order |
 | **R6** the divisibility rules | for some `2 ≤ q ≤ n`, no disparity divisible by `q` | the instant `t = 1/q` |
 | **R7** the free disparity | one disparity off the `P`-lattice of the rest; the rest at most three and sharing it | a lonely instant, `n ≥ 4` |
 
@@ -637,26 +633,38 @@ At a prime order every non-multiple is coprime and `φ(n) = n − 1`, so for a s
 `n − 2` non-flank disparities the budget condition holds automatically. At `n = 8` it asks that at
 most three of the non-flank disparities be odd.
 
-**R5, the descent.** Let `n ≥ 3`, let `n ∤ e`, and let every other disparity be `n·m` for `m` in a
-set `M`.
+**R5, the descent.** Split the disparities into a set `E` of disparities not divisible by `n` and
+the multiples `n·m`, `m ∈ M`. Give each `e ∈ E` the **cost** `max(2, gcd(e, n))`.
 
-> **Theorem 15 (Descent).** `{e} ∪ n·M` is lonely at threshold `1/n` if and only if `M` is lonely at
-> the same threshold `1/n`.
+> **Theorem 15 (Descent).** If the costs of `E` add up to less than `n`, then `E ∪ n·M` is lonely at
+> threshold `1/n` if and only if `M` is lonely at the same threshold `1/n`.
 
-*Proof.* If `t` is lonely for `{e} ∪ n·M`, then `τ = n·t` clears every `m ∈ M`, since `m·τ = (n·m)·t`.
+*Proof.* If `t` is lonely for `E ∪ n·M`, then `τ = n·t` clears every `m ∈ M`, since `m·τ = (n·m)·t`.
 
-Conversely let `τ > 0` clear `M`, and try `t = (τ + k)/n` for `k = 0, 1, 2`. Each multiple reads
-`(n·m)·t = m·τ + m·k`, unchanged mod 1, so it stays clear. The disparity `e` reads `x + e·k/n` with
-`x = e·τ/n`. Suppose all three were within `1/n` of integers `K₀, K₁, K₂`. The integers
-`σ = e − n(K₁ − K₀)` and `σ' = e − n(K₂ − K₁)` are `n` times a difference of two quantities each
-below `1/n` in absolute value, so `|σ|, |σ'| < 2`, and likewise `|σ + σ'| < 2`. Neither is `0`, since
-`n ∤ e`, so `σ, σ' ∈ {±1}` with `σ' = −σ`. Then `n·((K₂ − K₁) − (K₁ − K₀)) = σ − σ' = ±2`, which is
-impossible for `n ≥ 3`. So one of the three shifts clears `e`. ∎
+Conversely let `τ > 0` clear `M`, and try `t = (τ + k)/n` for `k = 0, 1, …, n − 1`. Each multiple
+reads `(n·m)·t = m·τ + m·k`, unchanged mod 1, so it stays clear. A disparity `e ∈ E` reads
+`x + e·k/n` with `x = e·τ/n`; call the shift `k` *blocked* for `e` when that reading is within `1/n`
+of an integer `K_k`. For two blocked shifts `k, k'`, the integer `σ(k, k') = e(k − k') − n(K_k − K_{k'})`
+is `n` times a difference of two quantities each below `1/n` in absolute value, so `|σ(k, k')| ≤ 1`;
+and the steps add, `σ(k, k'') = σ(k, k') + σ(k', k'')`.
 
-If every disparity is a multiple of `n`, dividing all of them by `n` changes no loneliness. R5
-therefore replaces a set with at most one non-multiple by a set with one disparity fewer, or with
-smaller disparities, at the same order. By Lemma 14 that is the same obligation, not a lower-order
-conjecture.
+* If `gcd(e, n) = 1`, a step `σ(k, k') = 0` gives `n | e(k − k')`, hence `k = k'`. Three distinct
+  blocked shifts would give three nonzero steps of size 1, one the sum of the other two, which is
+  impossible. So at most two shifts are blocked.
+* If `g = gcd(e, n) ≥ 2`, then `g` divides every step, so every step is `0`, and `n | e(k − k')` gives
+  `(n/g) | (k − k')`. All blocked shifts lie in one residue class mod `n/g` below `n`, so there are at
+  most `g`.
+
+So `e` blocks at most `max(2, gcd(e, n))` of the `n` shifts. The costs add up to less than `n`, so some
+shift is blocked for no `e ∈ E`, and at that `t` every disparity is clear. ∎
+
+A multiple of `n` would cost `n` on its own, so the condition already excludes one from `E`. With `E`
+empty the theorem says that dividing every disparity by `n` changes no loneliness. With `E = {e}` and
+`n ≥ 3` the condition always holds, so a single non-multiple can always be removed. At `n = 8` a
+disparity costs 4 if it is `≡ 4 (mod 8)` and 2 otherwise, so up to three non-multiples not `≡ 4`, or
+one `≡ 4` with one other, can be removed at once. R5 therefore replaces a set by one with fewer
+disparities, or with the same number and smaller ones, at the same order. By Lemma 14 that is the
+same obligation, not a lower-order conjecture.
 
 ### 10.5 Divisibility — R6
 
@@ -676,8 +684,8 @@ are the commensurable ones.
 
 ### 10.7 The units of `ℤ/n`
 
-The units of `ℤ/n` appear throughout, and primality nowhere. They are the global instants of the
-progression (Theorem 4); every opening index `a = n j + 1` is one (§6); R3's multiplier `s` and R4's
+The units of `ℤ/n` appear throughout, and primality nowhere. They index the moments of global
+isolation of the progression (Theorem 4); every opening index `a = n j + 1` is one (§6); R3's multiplier `s` and R4's
 multiplier `k` are units, and R4's budget is their number, `φ(n)`. A general witness has the same
 shape: any `a ≡ 1 (mod n)` with `a < n·e` at which every reading `d·a mod n·e` lies in `[e, (n−1)e]`
 is a certificate.
@@ -690,35 +698,40 @@ A rule whose failure is characterised is a case in a case analysis, and cases co
 >
 > **R3 applies** exactly when no disparity is divisible by `n` and some disparity is coprime to it.
 >
-> **R5 applies** exactly when at most one disparity is not divisible by `n`.
+> **R5 applies** exactly when the disparities not divisible by `n` have total cost below `n`; at
+> `n ≥ 3` this includes every set with at most one such disparity.
 
 R3's condition is the `q = n` instance of R6, which does not need a coprime flank to exist.
 
 ---
 
-## 11. The trichotomy
+## 11. What a smallest counterexample must look like
 
-Write `M` for the number of disparities divisible by `n`, and `c` for the number of disparities.
+Write `M` for the number of disparities divisible by `n`, and call the total cost of the others,
+`∑ max(2, gcd(e, n))`, their **cost**.
 
 | region | standing |
 |---|---|
 | `M = 0` | **closed** — R6 at `q = n` names `t = 1/n` |
-| `M ≥ c − 1` | **reduced** — R5 passes to one disparity fewer, or to smaller disparities, at the same order |
-| `1 ≤ M ≤ c − 2` | the middle |
+| cost below `n` | **reduced** — R5 passes to fewer disparities, or to smaller ones, at the same order |
+| `M ≥ 1` and cost at least `n` | the middle |
 
 The split is exhaustive. Order sets by the number of disparities and then by their sum.
 
 > **Corollary 16.** Let `n ≥ 3`. A set of positive integers that is not lonely at threshold `1/n`,
-> minimal in that order, has `1 ≤ M ≤ c − 2`.
+> minimal in that order, has at least one disparity divisible by `n`, and its disparities not
+> divisible by `n` have cost at least `n`.
 
-*Proof.* `M = 0` is impossible by R6. If `M = c − 1`, Theorem 15 gives a non-lonely set with one
-disparity fewer. If `M = c`, dividing by `n` gives a non-lonely set with the same number of
-disparities and a smaller sum. ∎
+*Proof.* `M = 0` is impossible by R6. If the cost is below `n`, Theorem 15 shows that the set of
+cofactors `M` is not lonely either. It has fewer disparities if any disparity is not divisible by
+`n`, and otherwise the same number with a smaller sum; either way the original set was not minimal. ∎
 
-The middle is not the region that remains. Only R3, R5 and R6 at `q = n` are indexed by `M`; R1, R2,
-R4, R6 at `q < n` and R7 are conditions of other kinds and reach into the middle without reference
-to the count. Both middle examples in this paper are settled: §7.1's set by R6 at `q = 6`, and §12's
-`{1, 2, 3, 5}` by R4. What remains is the part of the middle on which every rule fails.
+Each non-multiple costs at most `n/2`, so a cost of at least `n` needs at least two of them.
+
+The middle is not the region that remains. R1, R2, R4, R6 at `q < n` and R7 are conditions of other
+kinds and reach into it without reference to the cost. Both middle examples in this paper are settled:
+§7.1's set by R6 at `q = 6`, and §12's `{1, 2, 3, 5}` by R4. What remains is the part of the middle on
+which every rule fails.
 
 ---
 
@@ -738,10 +751,10 @@ problem one scale down, constrained additionally by the non-multiples:
     middle   =   resonant component at modulus e   +   non-resonant constraints.
 ```
 
-R3 is the case where the first part is empty. The descent of R5 handles one non-multiple: the shift
-by `k/n` moves only the non-multiple, and three steps suffice to clear it. With two or more
-non-multiples the same shift must clear several readings at once, and the argument does not extend
-as it stands.
+R3 is the case where the first part is empty. R5 removes the non-multiples whenever their cost is
+below `n`: the shift by `k/n` moves only the non-multiples, each blocks at most `max(2, gcd(e, n))` of
+the `n` shifts, and a free shift remains. When the cost reaches `n`, that count no longer guarantees a
+free shift, and a further condition is needed.
 
 **Example.** Take `{1, 2, 3, 5}` at order five. The resonant part is `{5}`; `1, 2, 3` are
 non-multiples. The set is lonely, and R4 reaches it: `5` is the largest disparity and the only
@@ -766,19 +779,22 @@ needed for the results above.
 
 ## 14. What is proved, and what remains
 
-**Proved — the characterisation (§§2–8).** Loneliness is a two-neighbour condition; simultaneous
-isolation is the regular `n`-gon, and a global instant survives a deformation exactly under
-Theorem 6; the number of simultaneously lonely runners is never `n − 1`. Every lonely instant is
-represented by a lonely opening, and conversely; for whole-number disparities the opening condition is
-a finite conjunction of modular memberships; the cascade halts exactly when the subject is lonely,
-at the first lonely instant. All of this holds at every order with no hypothesis beyond injectivity.
+**Proved — the characterisation (§§2–8).** Loneliness is a two-neighbour condition; global
+isolation is the regular `n`-gon, and a moment of global isolation survives a change of speeds exactly
+under Theorem 6; the number of simultaneously lonely runners is never `n − 1`. Every lonely instant is
+represented by a lonely opening, a moment of global isolation at the runner's own scale, and
+conversely; for whole-number disparities the opening condition is a finite conjunction of modular
+memberships; the cascade halts exactly when the subject is lonely. All of this holds at every order
+with no hypothesis beyond injectivity.
 
 **Proved — the cases (§§10–11).** Seven rules, each a condition with a proof that a certificate
 exists under it, at every order. Every configuration satisfying any of them is settled, and at every
-order there are infinitely many. A minimal counterexample lies in the middle of the trichotomy.
+order there are infinitely many. A minimal counterexample has a disparity divisible by `n` and
+non-multiples of cost at least `n`.
 
 **Remaining.** Conditions covering the disparity sets in the middle on which every rule fails, each
-discharged by showing a certificate exists. The list is incomplete; the entries on it are not
+discharged by showing a certificate exists. When they are found, the isolation of the ideal is shown
+to be shifted and never destroyed at every order. The list is incomplete; the entries on it are not
 provisional.
 
 ---
@@ -786,8 +802,8 @@ provisional.
 ## 15. General `n`
 
 Nothing in §§2–8 depends on the order except through the threshold `1/n`. The rules of §10 and the
-trichotomy of §11 hold at every order, with the stated lower bounds (`n ≥ 3` for R5, `n ≥ 4` for
-R7). Two further facts are proved at general `n`:
+trichotomy of §11 hold at every order, with the stated conditions (R5's cost condition, which forces
+`n ≥ 3` when a non-multiple is present; `n ≥ 4` for R7). Two further facts are proved at general `n`:
 
 * subjects with at most three distinct disparities are lonely at every order `n ≥ 4`, and subjects
   with at most four at every order `n ≥ 6`;
@@ -824,14 +840,14 @@ argument.
 | R2 | `lonely_flank_of_band`, `bandFits_forces_spread`, `spread_zero_iff_ratio` |
 | R3 | `flankWorks_of_coprime`, `flankWorks_of_not_resonant` |
 | R4 | `flankWorks_of_dvd_totient`, `exists_goodK_totient` |
-| R5, Theorem 15 | `lonely_descent_iff`, `exists_clear_shift`, `lonely_scale_iff` |
+| R5, Theorem 15 | `lonely_multi_descent_iff`, `card_bad_le`, `bad_step`; one non-multiple: `lonely_descent_iff`, `exists_clear_shift`; all multiples: `lonely_scale_iff` |
 | R6 | `ratWorks_le_order`, `ratWorks_one_iff`, `ratWorks_family_fails_iff` |
 | R7 | `lonely_of_one_free`, `lonely_of_one_irrational` |
 | the general witness form | `flankWorks_of_witness` |
-| §10.8, §11 | `multiples_trichotomy`, `self_rule_applies_iff`, `coprime_rule_applies_iff`, `divisibility_subsumes_coprime_flank` |
+| §10.8 | `multiples_trichotomy`, `self_rule_applies_iff`, `coprime_rule_applies_iff`, `divisibility_subsumes_coprime_flank` |
 | §15 | `exists_lonely_of_card_le_three`, `exists_lonely_of_card_le_four`, `diffSet_card_eq_of_extreme` |
 
-Lemma 14 and Corollary 16 are proved in the text.
+Lemma 14 and Corollary 16 are proved in the text from the declarations above.
 
 ---
 
@@ -846,7 +862,9 @@ zones; decide a cell by an interior point.
 **certificate** — a flank and an opening index `(e, j)` whose opening is lonely.
 **disparity** — one of the subject's speed differences `|vᵢ − v_k|`.
 **flank** — a disparity used as the denominator of an opening.
-**global instant** — an instant at which all `n` runners are lonely at once.
+**cost** — of a disparity `e` not divisible by `n`, the number `max(2, gcd(e, n))`.
+**global isolation** — all `n` runners lonely at the same moment; for equally spaced speeds it occurs
+`φ(n)` times per period.
 **in the way** — at circle distance strictly less than `1/n` from the subject.
 **move** — the step sending `t` to the largest next opening among the runners in the way.
 **non-resonant** — coprime to `n`.
